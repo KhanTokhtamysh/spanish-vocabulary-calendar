@@ -1,10 +1,10 @@
 # Spanish Vocabulary Calendar
 
-Notion is the source of truth for vocabulary. GitHub generates and hosts a rolling Apple Calendar (.ics) feed.
+Notion is the source of truth for vocabulary. GitHub Actions generates and publishes a rolling Apple Calendar (`.ics`) feed.
 
 ## Flow
 
-Notion → GitHub Actions → `docs/spanish-vocabulary.ics` → GitHub Pages → iPhone / Apple Watch
+Notion → GitHub Actions → GitHub Pages → iPhone / Apple Watch
 
 ## Notion data source
 
@@ -16,12 +16,12 @@ New entries are included automatically. Tick **Exclude from Calendar** to omit a
 
 No retention feedback is required. Calendar presentation is based on the age of each item:
 
-- 0–2 days: Spanish — English
-- 3–13 days: Spanish — ?
-- 14–44 days: English → ?
-- 45+ days: English → ? (maintenance frequency)
+- 0–2 days: `Spanish — English`
+- 3–13 days: `Spanish — ?`
+- 14–44 days: `English → ?`
+- 45+ days: `English → ?` at maintenance frequency
 
-These are exposure stages, not claims about memory.
+These are exposure stages, not claims about actual memory.
 
 ## Calendar defaults
 
@@ -32,15 +32,32 @@ These are exposure stages, not claims about memory.
 - no alerts
 - transparent/free
 - deterministic stable UIDs
-- examples/forms in DESCRIPTION
+- examples and conjugation/forms in DESCRIPTION
 
 ## One-time setup
 
-1. Create a Notion integration with read access and share the **Spanish Vocabulary** database with it.
-2. Add the integration token to this repository as an Actions secret named `NOTION_TOKEN`.
-3. In **Settings → Pages**, choose **Deploy from a branch**, branch `main`, folder `/docs`.
-4. Run **Actions → Update vocabulary calendar → Run workflow** once.
+1. Create a Notion integration with read access.
+2. Share the **Spanish Vocabulary** database with that integration.
+3. In this repository, open **Settings → Secrets and variables → Actions**.
+4. Add a repository secret named `NOTION_TOKEN` containing the Notion integration secret.
+5. Open **Settings → Pages**.
+6. Under **Build and deployment → Source**, select **GitHub Actions**.
+7. Open **Actions → Update vocabulary calendar → Run workflow**.
 
-Calendar subscription URL:
+The workflow also refreshes automatically every six hours.
+
+## Calendar subscription
+
+Once Pages has deployed successfully:
 
 `https://khantokhtamysh.github.io/spanish-vocabulary-calendar/spanish-vocabulary.ics`
+
+On iPhone: **Calendar → Calendars → Add Calendar → Add Subscription Calendar**, then paste the URL.
+
+## Repository structure
+
+- `generator/generate_calendar.py` — queries Notion and generates the ICS feed.
+- `.github/workflows/update-calendar.yml` — scheduled/manual Pages deployment.
+- `site/index.html` — simple landing page deployed alongside the feed.
+
+The Notion token is never stored in repository files.
