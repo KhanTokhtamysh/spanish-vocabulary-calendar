@@ -260,32 +260,61 @@ def event_summary(item):
         return compact(f"{en} → ?", 78)
     return compact(f"{es} — ?", 78)
 
+def split_learning_text(value):
+    """Split multiline or pipe-separated Notion learning text into clean items."""
+    if not value:
+        return []
+    text = str(value).replace("\r\n", "\n").strip()
+    # Newlines are preferred in Notion. " | " is supported as a compact fallback.
+    chunks = []
+    for line in text.split("\n"):
+        chunks.extend(line.split(" | "))
+    return [x.strip(" •-*\t") for x in chunks if x.strip(" •-*\t")]
+
 def event_description(item):
     card = item["card"]
-    stage_labels = {
-        "new": "New exposure",
-        "learning": "Learning exposure",
-        "familiar": "Familiar exposure",
-        "mastered": "Mastered maintenance",
-    }
-    lines = [
-        f"Spanish: {card['spanish']}",
-        f"English: {card['english']}" if card["english"] else "",
-        f"Stage: {stage_labels[item['stage']]} ({item['age']} days since added)",
-    ]
-    if card["forms"]:
-        lines.append(f"Forms: {card['forms']}")
-    if card["examples"]:
-        lines.append(f"Examples: {card['examples']}")
-    if card["notes"]:
-        lines.append(f"Usage: {card['notes']}")
-    if card["type"]:
-        lines.append(f"Type: {card['type']}")
-    if card["categories"]:
-        lines.append("Categories: " + ", ".join(card["categories"]))
-    if card["source"]:
-        lines.append(f"Source/context: {card['source']}")
-    return "\n".join(x for x in lines if x)
+    examples = split_learning_text(card["examples"])
+    forms = split_learning_text(card["forms"])
+    notes = split_learning_text(card["notes"])
+
+    lines = []
+
+    # The event title already carries the recall prompt. Notes should be study material,
+    # not scheduling metadata.
+    if card["type"].lower() == "verb":
+        if forms:
+            lines.append("CONJUGACIÓN")
+            lines.extend(f"• {form}" for form in forms)
+        if examples:
+            if lines:
+                lines.append("")
+            lines.append("EN CONTEXTO")
+            lines.extend(f"• {example}" for example in examples)
+    else:
+        if examples:
+            lines.append("EN CONTEXTO")
+            lines.extend(f"• {example}" for example in examples)
+        if forms:
+            if lines:
+                lines.append("")
+            lines.append("FORMAS ÚTILES")
+            lines.extend(f"• {form}" for form in forms)
+
+    # Usage notes are kept only when they teach something that examples/forms do not.
+    if notes:
+        if lines:
+            lines.append("")
+        lines.append("MATIZ")
+        lines.extend(f"• {note}" for note in notes)
+
+    # Fallback for sparse entries.
+    if not lines:
+        if card["english"]:
+            lines.append(f"{card['spanish']} — {card['english']}")
+        else:
+            lines.append(card["spanish"])
+
+    return "\n".join(lines)
 
 def ics_escape(value):
     return (
