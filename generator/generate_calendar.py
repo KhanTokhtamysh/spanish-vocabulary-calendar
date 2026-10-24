@@ -23,7 +23,7 @@ STAGE_SHARES = {
     "new": 0.55,
     "learning": 0.30,
     "familiar": 0.12,
-    "maintenance": 0.03,
+    "mastered": 0.03,
 }
 
 def notion_request(url, payload):
@@ -120,21 +120,25 @@ def cards_from_pages(pages):
             "categories": property_value(props.get("Categories")) or [],
             "source": property_value(props.get("Source / Context")) or "",
             "card_id": property_value(props.get("Card ID")) or "",
+            "retention": property_value(props.get("Retention")) or "New",
             "added": parse_added(property_value(props.get("Added"))),
         })
     cards.sort(key=lambda x: (x["added"], x["spanish"].casefold(), x["page_id"]))
     return cards
 
 def stage_for(card, on_date):
+    # Retention is manually controlled in Notion.
+    # Blank/unknown values intentionally fall back to New.
     added_date = card["added"].astimezone(TZ).date()
     age = max(0, (on_date - added_date).days)
-    if age <= 2:
-        return "new", age
-    if age <= 13:
-        return "learning", age
-    if age <= 44:
-        return "familiar", age
-    return "maintenance", age
+    raw = str(card.get("retention") or "New").strip().lower()
+    stage = {
+        "new": "new",
+        "learning": "learning",
+        "familiar": "familiar",
+        "mastered": "mastered",
+    }.get(raw, "new")
+    return stage, age
 
 def allocate_stage_counts(groups, slots):
     present = [s for s, values in groups.items() if values]
@@ -262,7 +266,7 @@ def event_description(item):
         "new": "New exposure",
         "learning": "Learning exposure",
         "familiar": "Familiar exposure",
-        "maintenance": "Maintenance exposure",
+        "mastered": "Mastered maintenance",
     }
     lines = [
         f"Spanish: {card['spanish']}",
