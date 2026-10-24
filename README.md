@@ -36,13 +36,15 @@ These are exposure stages, not claims about actual memory.
 
 ## One-time setup
 
-1. Create a Notion integration with read access.
-2. Share the **Spanish Vocabulary** database with that integration.
+1. In the Notion Developer portal, create a **Personal access token** with the **Notion API** capability for your workspace.
+2. Copy the token when Notion shows it.
 3. In this repository, open **Settings → Secrets and variables → Actions**.
-4. Add a repository secret named `NOTION_TOKEN` containing the Notion integration secret.
+4. Add a repository secret named `NOTION_TOKEN` containing that token.
 5. Open **Settings → Pages**.
 6. Under **Build and deployment → Source**, select **GitHub Actions**.
 7. Open **Actions → Update vocabulary calendar → Run workflow**.
+
+A Notion personal access token uses your own page permissions, so the vocabulary database does not need to be separately shared with a bot connection.
 
 The workflow also refreshes automatically every six hours.
 
