@@ -12,16 +12,18 @@ Notion → GitHub Actions → GitHub Pages → iPhone / Apple Watch
 
 New entries are included automatically. Tick **Exclude from Calendar** to omit an item without deleting it.
 
-## Exposure stages
+## Retention levels
 
-No retention feedback is required. Calendar presentation is based on the age of each item:
+The Notion **Retention** dropdown directly controls calendar frequency and presentation.
 
-- 0–2 days: `Spanish — English`
-- 3–13 days: `Spanish — ?`
-- 14–44 days: `English → ?`
-- 45+ days: `English → ?` at maintenance frequency
+- **New** — 55% weight — `Spanish — English`
+- **Learning** — 30% weight — `Spanish — ?`
+- **Familiar** — 12% weight — `English → ?`
+- **Mastered** — 3% weight — `English → ?`, occasional maintenance
 
-These are exposure stages, not claims about actual memory.
+Weights are normalized across the levels that currently contain cards. For example, if there are no Mastered cards, its capacity is redistributed automatically.
+
+A blank or unrecognized Retention value is treated as **New**.
 
 ## Calendar defaults
 
