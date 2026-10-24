@@ -65,3 +65,15 @@ On iPhone: **Calendar → Calendars → Add Calendar → Add Subscription Calend
 - `site/index.html` — simple landing page deployed alongside the feed.
 
 The Notion token is never stored in repository files.
+
+
+## Calendar note content
+
+Calendar descriptions are intentionally learning-focused. They do not repeat retention stage, categories, source metadata, or card type.
+
+For vocabulary entries, the Notion **Examples** field should contain 3–4 examples separated by line breaks:
+1. natural everyday/spoken usage,
+2. a richer narrative or literary-style context,
+3. a formal, professional, domain-specific, or idiomatic context when useful.
+
+For verbs, **Conjugation / Forms** should contain only useful active forms (for example present, preterite, subjunctive and imperative when relevant), followed by contextual examples in the calendar description.
